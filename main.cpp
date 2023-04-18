@@ -19,11 +19,13 @@ int rand_generator(int a, int b) {
 void dfs(char start, char goal, std::map<char, std::vector<std::pair<char, int>>> graph, std::map<char, int> heuristic_values) {
     char current_node = start;
     vector<char> history;
+    int total = 0;
     while (current_node != goal)
     {
        history.push_back(current_node);
        int size = graph.at(current_node).size();
        int successor = rand_generator(0, size - 1);
+       total += graph.at(current_node).at(successor).second;
        current_node = graph.at(current_node).at(successor).first;
     }
     history.push_back(goal);
@@ -31,6 +33,7 @@ void dfs(char start, char goal, std::map<char, std::vector<std::pair<char, int>>
     {
         std::cout << node << std::endl;
     }
+    std::cout << "total: " << total << std::endl;
     
 }
 
@@ -97,7 +100,10 @@ int main(int argc, char const *argv[])
         }
         std::cout << std::endl;
     } */
-    
+    for (size_t i = 0; i < 10000; i++)
+    {
+        dfs(start, goal, graph, heuristic_values);
+    }
     dfs(start, goal, graph, heuristic_values);
     return 0;
 }
