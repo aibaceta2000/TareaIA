@@ -5,8 +5,14 @@
 #include <sstream>
 #include <map>
 #include <random>
+#include <algorithm>
 
 using namespace std;
+
+bool custom_operator(pair<char, int> x, pair<char, int> y)
+{
+    return x.second < y.second; //return the one with smaller first element
+}
 
 int rand_generator(int a, int b) {
     std::random_device rd;
@@ -44,10 +50,9 @@ void uniform_cost_search(char start, char goal, std::map<char, std::vector<std::
     while (current_node != goal)
     {
        history.push_back(current_node);
-       int size = graph.at(current_node).size();
-       int successor = rand_generator(0, size - 1);
-       total += graph.at(current_node).at(successor).second;
-       current_node = graph.at(current_node).at(successor).first;
+       std::sort(graph.at(current_node).begin(),graph.at(current_node).begin(),custom_operator);
+       total += graph.at(current_node).at(0).second;
+       current_node = graph.at(current_node).at(0).first;
     }
     history.push_back(goal);
     for (auto &&node : history)
@@ -120,6 +125,6 @@ int main(int argc, char const *argv[])
         }
         std::cout << std::endl;
     } */
-    dfs(start, goal, graph, heuristic_values);
+    uniform_cost_search(start, goal, graph, heuristic_values);
     return 0;
 }
