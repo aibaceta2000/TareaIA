@@ -9,6 +9,12 @@
 
 using namespace std;
 
+struct graph_node{
+    char identifier;
+    int heuristic_value;
+    std::vector<std::pair<char, int>> edges;
+};
+
 bool custom_operator(pair<char, int> x, pair<char, int> y)
 {
     return x.second < y.second; //return the one with smaller first element
@@ -22,17 +28,18 @@ int rand_generator(int a, int b) {
     return succesor;
 }
 
-void dfs(char start, char goal, std::map<char, std::vector<std::pair<char, int>>> graph, std::map<char, int> heuristic_values) {
+
+void dfs(char start, char goal, std::map<char, graph_node>  graph) {
     char current_node = start;
     vector<char> history;
     int total = 0;
     while (current_node != goal)
     {
        history.push_back(current_node);
-       int size = graph.at(current_node).size();
+       int size = graph.at(current_node).edges.size();
        int successor = rand_generator(0, size - 1);
-       total += graph.at(current_node).at(successor).second;
-       current_node = graph.at(current_node).at(successor).first;
+       total += graph.at(current_node).edges.at(successor).second;
+       current_node = graph.at(current_node).edges.at(successor).first;
     }
     history.push_back(goal);
     for (auto &&node : history)
@@ -43,16 +50,16 @@ void dfs(char start, char goal, std::map<char, std::vector<std::pair<char, int>>
     
 }
 
-void uniform_cost_search(char start, char goal, std::map<char, std::vector<std::pair<char, int>>> graph, std::map<char, int> heuristic_values){
+void uniform_cost_search(char start, char goal, std::map<char, graph_node>  graph){
     char current_node = start;
     vector<char> history;
     int total = 0;
     while (current_node != goal)
     {
        history.push_back(current_node);
-       std::sort(graph.at(current_node).begin(),graph.at(current_node).begin(),custom_operator);
-       total += graph.at(current_node).at(0).second;
-       current_node = graph.at(current_node).at(0).first;
+       std::sort(graph.at(current_node).edges.begin(),graph.at(current_node).edges.end(),custom_operator);
+       total += graph.at(current_node).edges.at(0).second;
+       current_node = graph.at(current_node).edges.at(0).first;
     }
     history.push_back(goal);
     for (auto &&node : history)
@@ -64,9 +71,7 @@ void uniform_cost_search(char start, char goal, std::map<char, std::vector<std::
 
 int main(int argc, char const *argv[])
 {
-    /*std::vector<std::vector<std::pair<int,int>>> graph;*/
-    std::map<char, std::vector<std::pair<char, int>>> graph;  
-    std::map<char, int> heuristic_values;
+    std::map<char, graph_node>  graph;
 
     std::string temp;
     char start, goal;
@@ -101,30 +106,36 @@ int main(int argc, char const *argv[])
     
     for (auto &&heuristic : heuristics)
     {
-        heuristic_values.insert({heuristic.first, heuristic.second});
         auto iterator = graph.find(heuristic.first);
         if (iterator == graph.end())
         {
-            vector<std::pair<char, int>> temp;
+            graph_node temp;
+            vector<std::pair<char, int>> temp_vector;
+            temp.identifier = heuristic.first;
+            temp.heuristic_value = heuristic.second;
+            temp.edges = temp_vector;
             graph.insert({heuristic.first, temp});
         }
     }
 
     for (auto &&edge : edges)
     {
-        graph.at(edge.first.first).push_back(std::make_pair(edge.first.second, edge.second));   
+        graph.at((edge.first.first)).edges.push_back(std::make_pair(edge.first.second, edge.second));
     }
     
-    /* std::cout << graph.size() << std::endl;
-    for (auto &&element : graph)
+    /*
+    for (auto &&node : graph)
     {
-        std::cout << element.first << ": ";
-        for (auto &&edge : element.second)
+        std::cout << "node identifier: " << node.first << " heuristic value: " << node.second.heuristic_value << std::endl;
+        std::cout << " edges:" <<std::endl;
+        for (auto &&edge : node.second.edges)
         {
-            std::cout<<edge.first << " " <<edge.second << " ";
+            std::cout<< "    " <<edge.first <<" " << edge.second <<std::endl;
         }
-        std::cout << std::endl;
-    } */
-    uniform_cost_search(start, goal, graph, heuristic_values);
+        
+    }*/
+
+    //dfs(start, goal, graph);
+    uniform_cost_search(start, goal, graph);
     return 0;
 }
