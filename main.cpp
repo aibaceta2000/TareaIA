@@ -4,11 +4,34 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <random>
 
 using namespace std;
 
-void dfs(char start, char goal, std::map<char, std::vector<std::pair<char, int>>> graph, std::map<char, int> heuristic_values) {
+int rand_generator(int a, int b) {
+    std::random_device rd;
+    std::mt19937 e(rd());
+    std::uniform_int_distribution<int> dist(a, b);
+    int succesor = dist(e);
+    return succesor;
+}
 
+void dfs(char start, char goal, std::map<char, std::vector<std::pair<char, int>>> graph, std::map<char, int> heuristic_values) {
+    char current_node = start;
+    vector<char> history;
+    while (current_node != goal)
+    {
+       history.push_back(current_node);
+       int size = graph.at(current_node).size();
+       int successor = rand_generator(0, size - 1);
+       current_node = graph.at(current_node).at(successor).first;
+    }
+    history.push_back(goal);
+    for (auto &&node : history)
+    {
+        std::cout << node << std::endl;
+    }
+    
 }
 
 int main(int argc, char const *argv[])
@@ -64,7 +87,7 @@ int main(int argc, char const *argv[])
         graph.at(edge.first.first).push_back(std::make_pair(edge.first.second, edge.second));   
     }
     
-    std::cout << graph.size() << std::endl;
+    /* std::cout << graph.size() << std::endl;
     for (auto &&element : graph)
     {
         std::cout << element.first << ": ";
@@ -73,8 +96,8 @@ int main(int argc, char const *argv[])
             std::cout<<edge.first << " " <<edge.second << " ";
         }
         std::cout << std::endl;
-    }
+    } */
     
-
+    dfs(start, goal, graph, heuristic_values);
     return 0;
 }
