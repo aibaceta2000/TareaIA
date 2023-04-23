@@ -1,0 +1,13 @@
+Init: S
+Goal: G
+S 7
+A 10
+B 9
+C 5
+G 0
+S, A, 1
+A, B, 9
+S, B, 1
+B, C, 6
+C, G, 5
+B, G, 12

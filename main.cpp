@@ -153,44 +153,63 @@ void greedy(char start, char goal, std::map<char, graph_node>  graph){
     std::cout << "total: " << total << std::endl;
 }
 
+void print_solution(std::vector<char> history, int total_distance, int total_heuristic){
+
+}
+
 int main(int argc, char const *argv[])
-{
+{   
+    //creamos un mapa que como key recibe la letra que identifica al vertice y como value almacena la struct grap_node
     std::map<char, graph_node>  graph;
 
     std::string temp;
     char start, goal;
+    //recibimos el nodo de entrada y de salida
     std::cin >> temp >> start;
     std::cin >> temp >> goal;
+    //creamos un vector para almacenar las heuristicas
     std::vector<std::pair<char, int>> heuristics;
+    //creamos un vector para almacenar las aristas donde el par de chars contiene los vertices y el int contiene el costo 
+    //de ir de un vertice a otro
     std::vector<std::pair<std::pair<char, char>, int>> edges;
+    //creamos un vector para almacenar las lines
     std::vector<std::string> lines;
+    //recibimos todas las lineas
     std::getline(std::cin, temp);
     while (std::getline(std::cin, temp))
     {
         lines.push_back(temp);
     }
     
+    //operamos sobre cada linea
     for (auto &&line : lines)
     {
         stringstream ss(line);
         std::string node, node1, node2;
         int cost, heuristic;
+        //si la linea contiene una "," entonces esta debe ser una linea que describe una arista
         if (line.find(',') != std::string::npos)
         {
             std::getline(ss, node1, ',') && std::getline(ss, node2, ',') && (ss >> cost);
+            //almacenamos las aristas en el vector de aristas
             std::pair<char, char> edge(node1.at(0), node2.at(1));
             std::pair<std::pair<char, char>, int> temp(edge, cost);
             edges.push_back(temp);
         }else{
+            //si la linea no contiene comas entonces debe ser una linea que contiene informacion sobre las heuristicas
             ss >> node && ss >> heuristic;
+            //almacenamos las heuristicas
             std::pair<char, int> temp(node.at(0), heuristic);
             heuristics.push_back(temp);
         }
     }
     
+    //operamos sobre el vector que contiene las heuristicas
     for (auto &&heuristic : heuristics)
     {
+        //verificamos si el vertice de la heuristica se encuentra o no en el grafo
         auto iterator = graph.find(heuristic.first);
+        //si no lo esta lo añadimos, creando un nodo y añadiendo su vector de aristas, el char identificador y el valor de la heuristica
         if (iterator == graph.end())
         {
             graph_node temp;
@@ -202,47 +221,30 @@ int main(int argc, char const *argv[])
         }
     }
 
+    //luego añadimos las aristas a la lista de aristas de cada vertice para la cual operamos sobre el vector de aristas
     for (auto &&edge : edges)
     {
         graph.at((edge.first.first)).edges.push_back(std::make_pair(edge.first.second, edge.second));
     }
-    
-    /*
-    for (auto &&node : graph)
-    {
-        std::cout << "node identifier: " << node.first << " heuristic value: " << node.second.heuristic_value << std::endl;
-        std::cout << " edges:" <<std::endl;
-        for (auto &&edge : node.second.edges)
-        {
-            std::cout<< "    " <<edge.first <<" " << edge.second <<std::endl;
-        }
-        
-    }*/
 
-    //dfs(start, goal, graph);
-    //uniform_cost_search(start, goal, graph);
-    a_star(start, goal, graph);
-    //greedy(start, goal, graph);
-    /*std::vector<std::tuple<int,char>> nodos;
-    nodos.push_back(std::make_tuple(5,'a'));
-    nodos.push_back(std::make_tuple(6,'a'));
-    nodos.push_back(std::make_tuple(7,'a'));
-    nodos.push_back(std::make_tuple(8,'a'));
-
-    std::priority_queue<std::tuple<int,char>, std::vector<std::tuple<int,char>>, std::function<bool(std::tuple<int,char>, std::tuple<int,char>)>> pq(custom_operator_tuple);
-    pq.push(std::make_tuple(4,'a'));
-    pq.push(std::make_tuple(8,'a'));
-    pq.push(std::make_tuple(5,'a'));
-    pq.push(std::make_tuple(1,'a'));
-    pq.push(std::make_tuple(9,'a'));
-    std::cout<<pq.size()<<std::endl;
-    for (size_t i = 0; i < 5; i++)
+    if (std::string(argv[1]) == "--d")
     {
-        std::tuple<int,char> temp = pq.top();
-        pq.pop();
-        std::cout<<get<0>(temp) << std::endl;
-    } */
+        dfs(start, goal, graph);
+    }
+
+    if (std::string(argv[1]) == "--u")
+    {
+        uniform_cost_search(start, goal, graph);
+    }
+
+    if (std::string(argv[1]) == "--a")
+    {
+        a_star(start, goal, graph);
+    }
     
-    
+    if (std::string(argv[1]) == "--g")
+    {
+        greedy(start, goal, graph);
+    }
     return 0;
 }
