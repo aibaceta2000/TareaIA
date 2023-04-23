@@ -27,6 +27,11 @@ bool custom_operator_uniform_cost_search(std::tuple<char, int, std::vector<char>
     return get<1>(x) > get<1>(y); //return the one with smaller first element
 }
 
+bool custom_operator_a_star(std::tuple<char, int, std::vector<char>, int> x, std::tuple<char, int, std::vector<char>, int> y)
+{
+    return get<3>(x) > get<3>(y); //return the one with smaller first element
+}
+
 bool custom_operator_tuple(tuple<int, char> x, tuple<int, char> y)
 {
     return get<0>(x) > get<0>(y); //return the one with smaller first element
@@ -78,33 +83,49 @@ void uniform_cost_search(char start, char goal, std::map<char, graph_node>  grap
             temp.push_back(nd.first);
             pq.push(std::make_tuple(nd.first, get<1>(pq.top()) + nd.second, temp));
         }
-        std::cout << "current node: "<<get<0>(pq.top()) << " current distance: "<< get<1>(pq.top())<<" historial: ";
-        for (auto &&temp : get<2>(pq.top()))
-        {
-            std::cout<<temp<<", ";
-        }
-        std::cout<<std::endl;
-        
         pq.pop();
-        if (get<0>(pq.top()) == goal)
-        {
-            std::cout << "current node: "<<get<0>(pq.top()) << " current distance: "<< get<1>(pq.top())<<" historial: ";
-            for (auto &&temp : get<2>(pq.top()))
-            {
-                std::cout<<temp<<", ";
-            }
-            std::cout<<std::endl;            
-        }
         if (get<0>(pq.top()) == goal)
         {
             final = pq.top();
         }            
     }
-    std::cout << "final node: "<<get<0>(pq.top()) << " final distance: "<< get<1>(pq.top())<<" historial: ";
-    for (auto &&temp : get<2>(pq.top()))
+    std::cout << "final node: "<<get<0>(final) << " final distance: "<< get<1>(final)<<" historial: ";
+    for (auto &&temp : get<2>(final))
         {
             std::cout<<temp<<", ";
         }
+    std::cout<<std::endl;         
+}
+
+void a_star(char start, char goal, std::map<char, graph_node>  graph){
+    char current_node = start;
+    vector<char> history;
+    std::priority_queue<std::tuple<char, int, std::vector<char>, int>, std::vector<std::tuple<char, int, std::vector<char>, int>>, std::function<bool(std::tuple<char, int, std::vector<char>, int>, std::tuple<char, int, std::vector<char>, int>)>> pq(custom_operator_a_star);
+    history.push_back(current_node);    
+    pq.push(std::make_tuple(graph.at(current_node).identifier, 0, history, 0));
+    std::tuple<char, int, std::vector<char>, int> final;
+    std::tuple<char, int, std::vector<char>, int> current;
+    while (get<0>(pq.top()) != goal)
+    {
+        current = pq.top();
+        pq.pop();
+        for (auto &&nd : graph.at(get<0>(current)).edges)
+        {
+            std::vector<char> temp = get<2>(current);
+            temp.push_back(nd.first);
+            pq.push(std::make_tuple(nd.first, get<1>(current) + nd.second, temp, get<1>(current) + nd.second + graph.at(nd.first).heuristic_value));
+        }
+        
+        if (get<0>(pq.top()) == goal)
+        {
+            final = pq.top();
+        }      
+    }
+    std::cout << "final node: "<<get<0>(final) << " final heuristic: "<< get<3>(final)<<" historial: ";
+    for (auto &&temp : get<2>(final))
+        {
+            std::cout<<temp<<", ";
+        }  
     std::cout<<std::endl;         
 }
 
@@ -199,7 +220,8 @@ int main(int argc, char const *argv[])
     }*/
 
     //dfs(start, goal, graph);
-    uniform_cost_search(start, goal, graph);
+    //uniform_cost_search(start, goal, graph);
+    a_star(start, goal, graph);
     //greedy(start, goal, graph);
     /*std::vector<std::tuple<int,char>> nodos;
     nodos.push_back(std::make_tuple(5,'a'));
