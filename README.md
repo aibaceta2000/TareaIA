@@ -26,7 +26,8 @@ A continuacion se muestra un ejemplo de ejecucion para el programa para un archi
 
 ## Ejemplo de archivo:
 
-El siguiente es un ejemplo de archivo que corresponde al ejemplo incluido en el pdf
+El siguiente es un ejemplo de archivo que corresponde al ejemplo incluido en el pdf, en el repositorio se pueden encontrar dos archivos de ejemplo que 
+corresponden al problema adjuntado en el documento de la tarea con nombre `ejemplo2.txt` y otro ejemplo `ejemplo.txt`
 ```
 Init: A
 Goal: H
