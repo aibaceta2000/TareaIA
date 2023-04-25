@@ -9,8 +9,8 @@ g++ main.cpp
 ```
 
 # Paso 2: Ejecutar
-a continuacion se podra ejecutar el programa para lo cual se requerira un archivo en txt y ademas se debera decidir con cual de los cuatro algoritmos
-para encontrar la ruta entre los nodos seleccionados puede ser `--d para búsqueda en profundidad (escogiendo un sucesor al azar)`, `--u para 
+a continuacion se podra ejecutar el programa para lo cual se requerira un archivo en txt y ademas se debera decidir cual de los cuatro algoritmos
+para encontrar la ruta entre los nodos seleccionados se desea usar `--d para búsqueda en profundidad (escogiendo un sucesor al azar)`, `--u para 
 búsqueda por costo uniforme`, `--g para busqueda greedy` y `--a para A*`:
 
 ```
